@@ -13,7 +13,7 @@ function loadEnv(): Env {
   return envSchema.parse(process.env);
 }
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 const env = loadEnv();
 
 export type BlogAppContext = {

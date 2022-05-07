@@ -1,20 +1,12 @@
-import { BlogAppContext } from "../context";
+import { userLoader } from "../loaders/useLoader";
 
 type PostParentType = {
   authorId: number;
 };
 
 const Post = {
-  user: (
-    { authorId }: PostParentType,
-    _: unknown,
-    { prisma }: BlogAppContext
-  ) => {
-    return prisma.user.findUnique({
-      where: {
-        id: authorId,
-      },
-    });
+  user: ({ authorId }: PostParentType, _: unknown) => {
+    return userLoader.load(authorId);
   },
 };
 
