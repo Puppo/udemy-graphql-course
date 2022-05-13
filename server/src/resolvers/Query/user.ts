@@ -20,12 +20,19 @@ export const userQueries = {
   profile: async (
     _: unknown,
     { userId }: { userId: string },
-    { prisma }: BlogAppContext
-  ): Promise<Profile | null> => {
-    return await prisma.profile.findUnique({
+    { prisma, userInfo }: BlogAppContext
+  ): Promise<(Profile & { isMyProfile: boolean }) | null> => {
+    const isMyProfile = Number(userId) === userInfo?.userId;
+    const profile = await prisma.profile.findUnique({
       where: {
         userId: Number(userId),
       },
     });
+    if (!profile) return null;
+
+    return {
+      ...profile,
+      isMyProfile,
+    };
   },
 };

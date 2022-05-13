@@ -1,5 +1,25 @@
-import React, { useState } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { gql, useMutation } from '@apollo/client';
+import { useEffect, useState } from "react";
+import { Button, Form, Modal } from "react-bootstrap";
+
+const POST_CREATE = gql`
+  mutation($title: String!, $content: String!) {
+    postCreate(post: { title: $title, content: $content }) {
+      post {
+        id
+        title
+        content
+        user {
+          name
+        }
+      }
+      userErrors {
+        message
+      }
+    }
+  }
+`;
+
 
 export default function AddPostModal() {
   const [show, setShow] = useState(false);
@@ -10,7 +30,26 @@ export default function AddPostModal() {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
 
-  const handleClick = () => {};
+  const [postCreate, { data }] = useMutation(POST_CREATE)
+
+  const handleClick = () => {
+    if (!content || !title) return;
+    postCreate({
+      variables: {
+        content,
+        title
+      }
+    })
+  };
+
+  useEffect(() => {
+    if (data) {
+      if (data.postCreate.post) {
+        setShow(false);
+      }
+    }
+  }, [data])
+
 
   return (
     <>
